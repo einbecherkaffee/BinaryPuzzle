@@ -233,13 +233,15 @@ int Matrix::get_supposed_value(int x, int y, char c, char input) {
 bool Matrix::fill_random_pole() {
 	int x = (int)rand() % size;
 	int y = (int)rand() % size;
+	int random_znak = rand() % 2 + '0';
 	if (matrix[y][x]->znak == '.') {
-		if (validate(x, y, '0')) {
-			matrix[y][x]->setchar('0');
+		if (validate(x, y, random_znak)) {
+			matrix[y][x]->setchar(random_znak);
 			return true;
 		}
-		else if (validate(x, y, '1')) {
-			matrix[y][x]->setchar('1');
+		random_znak = random_znak == '0' ? '1' : '0';
+		if (validate(x, y, random_znak)) {
+			matrix[y][x]->setchar(random_znak);
 			return true;
 		}
 	}

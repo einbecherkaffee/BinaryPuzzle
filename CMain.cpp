@@ -73,7 +73,8 @@ int CMain::run() {
 		}
 		else if (znak == 'n') {
 			// TODO: nowa gra
-			delete m;
+			if (m->noerrors)
+				delete m;
 			m = new Matrix(12);
 		}
 		else if (znak == 'o') {

@@ -1,9 +1,9 @@
+#define _CRT_SECURE_NO_WARNINGS
 //#include <stdio.h> 
 #include <time.h>
 #include <stdlib.h>
 
 
-#define _CRT_SECURE_NO_WARNINGS
 #include "Matrix.h"
 
 Matrix::Matrix() {
@@ -85,8 +85,9 @@ Matrix::Matrix(int size) {
 	}
 
 	if (size == 12) {
-		//FILE* file = fopen(filename, "r");
-		FILE* file = fopen("C:\\Users\\chom\\Dropbox\\PP\\BinaryPuzzle\\Debug\\plansza12x12.txt", "r");
+		FILE* file = fopen(filename, "r");
+		//FILE* file = fopen("C:\\BinaryPuzzle\\plansza12x12.txt", "r");
+		//FILE* file = fopen("plansza12x12.txt", "r");
 		if (file != NULL) {
 			matrix = new Pole**[size];
 			for (int i = 0; i < size; i++) {
@@ -281,15 +282,15 @@ int Matrix::get_supposed_value(int x, int y, char c, char input) {
 bool Matrix::fill_random_pole() {
 	int x = (int)rand() % size;
 	int y = (int)rand() % size;
-	if (validate(x, y, '0')) {
-		matrix[y][x]->setchar('0');
-		return true;
+	if (matrix[y][x]->znak == '.') {
+		if (validate(x, y, '0')) {
+			matrix[y][x]->setchar('0');
+			return true;
+		}
+		else if (validate(x, y, '1')) {
+			matrix[y][x]->setchar('1');
+			return true;
+		}
 	}
-	else if (validate(x, y, '1')) {
-		matrix[y][x]->setchar('0');
-		return true;
-	}
-	else {
-		return false;
-	}
+	return false;
 }

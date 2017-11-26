@@ -8,7 +8,6 @@
 class Matrix {
 private:
 	int size = 0;
-	int elements_size;
 	const int ile_randomowych_pol_uzupelnic = 5;
 	const int ile_prob_uzupelnienia = 50;
 public:

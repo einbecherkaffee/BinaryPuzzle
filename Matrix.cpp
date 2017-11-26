@@ -3,77 +3,15 @@
 #include <time.h>
 #include <stdlib.h>
 
-
 #include "Matrix.h"
 
-Matrix::Matrix() {
-	noerrors = true;
-	clrscr();
-	gotoxy(0, 0);
-	cputs("Podaj rozmiar planszy: ");
-	int startX = wherex();
-	int x, y = wherey(); // pozycja kursora
-	char znak;
-	bool podanoParzysta = true;
+Matrix::Matrix() { }
 
-
-	do
-	{
-		do {
-			znak = getch();
-			if (znak == '\r') break;	//enter
-			else if (znak == 0x08) {	//backspace
-				x = wherex();
-				if (startX < x) {
-					putchar(znak);
-					putchar(' ');
-					putchar(znak);
-					size /= 10;
-				}
-
-			}
-			else if (znak >= '0' && znak <= '9') {
-				putchar(znak);
-				size *= 10;
-				size += znak - 0x30;
-
-			}
-		} while (true);
-		if (size < 2 || size % 2 == 1) {
-			gotoxy(startX, y + 1);
-			printf("Podano nieparzysta liczbe lub za maly rozmiar!");
-			podanoParzysta = false;
-			size = 0;
-			int charsToDelete = wherex() - startX;
-			gotoxy(startX, y);
-			for (int i = 0; i < charsToDelete; i++)
-				putch(' ');
-			gotoxy(startX, y);
-		}
-		else {
-			podanoParzysta = true;
-		}
-	} while (!podanoParzysta);
-
-	elements_size = size*size;
-	matrix = new Pole**[size];
-
-	for (int i = 0; i < size; i++) {
-		matrix[i] = new Pole*[size];
-	}
-
-	for (int i = 0; i < size; i++) {
-		for (int j = 0; j < size; j++) {
-			matrix[i][j] = new Pole(j, i);
-		}
-	}
-}
 Matrix::Matrix(int size) {
 	noerrors = true;
-	//TODO: sprawdziæ poprawnoœæ tej funkcji
 	setSize(size);
 
-	char filename[17] = "plansza00x00.txt";
+	char filename[] = "plansza00x00.txt";
 	char* rzad;
 	if (size < 10) {
 		filename[8] = size + '0';
@@ -84,36 +22,49 @@ Matrix::Matrix(int size) {
 		filename[8] = filename[11] = size % 10 + '0';
 	}
 
-	if (size == 12) {
-		FILE* file = fopen(filename, "r");
-		//FILE* file = fopen("C:\\BinaryPuzzle\\plansza12x12.txt", "r");
-		//FILE* file = fopen("plansza12x12.txt", "r");
-		if (file != NULL) {
-			matrix = new Pole**[size];
-			for (int i = 0; i < size; i++) {
-				matrix[i] = new Pole*[size];
-			}
 
-
-			rzad = new char[size + 1];
-			for (int i = 0; i < size; i++) {
-				fread(rzad, 1, size + 1, file);
-				for (int j = 0; j < size; j++) {
-					matrix[i][j] = new Pole(j, i, rzad[j]);
-				}
-			}
-			fclose(file);
+	FILE* file = fopen(filename, "r");
+	if (file != NULL) {
+		matrix = new Pole**[size];
+		for (int i = 0; i < size; i++) {
+			matrix[i] = new Pole*[size];
 		}
-		else {
-			noerrors = false;
+
+
+		rzad = new char[size + 1];
+		for (int i = 0; i < size; i++) {
+			fread(rzad, 1, size + 1, file);
+			for (int j = 0; j < size; j++) {
+				matrix[i][j] = new Pole(j, i, rzad[j]);
+			}
+		}
+		fclose(file);
+	}
+	else {
+		matrix = new Pole**[size];
+		for (int i = 0; i < size; i++) {
+			matrix[i] = new Pole*[size];
+		}
+
+
+		rzad = new char[size + 1];
+		for (int i = 0; i < size; i++) {
+			for (int j = 0; j < size; j++) {
+				matrix[i][j] = new Pole(j, i, '.');
+			}
+		}
+		for (int i = 0; i < size; i++) {
+			fill_random_pola();
 		}
 	}
 }
 
+
 Matrix::~Matrix() {
-	for (int i = 0; i < size; i++) {
-		delete matrix[i];
-	}
+	if (!matrix)
+		for (int i = 0; i < size; i++) {
+			delete matrix[i];
+		}
 	delete matrix;
 }
 
@@ -293,4 +244,20 @@ bool Matrix::fill_random_pole() {
 		}
 	}
 	return false;
+}
+void Matrix::fill_random_pola() {
+	int prob_nieudanych = 0;
+	int udanych = 0;
+	for (int i = 0; i < size; i++) {
+		if (fill_random_pole()) {
+			udanych++;
+		}
+		else {
+			prob_nieudanych++;
+		}
+		if (prob_nieudanych >= ile_prob_uzupelnienia)
+			return;
+		if (udanych >= ile_randomowych_pol_uzupelnic)
+			return;
+	}
 }

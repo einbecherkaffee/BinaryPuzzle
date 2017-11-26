@@ -17,6 +17,8 @@ public:
 	int run();
 	void printMenu(int x, int y);
 	void printBorder();
+	int pobierzRozmiar();
+	void nowaGra();
 };
 
 #endif // !CMAIN_H

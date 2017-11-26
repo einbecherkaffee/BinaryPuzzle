@@ -12,11 +12,8 @@ CMain::CMain() {
 	textCol = 7;
 	bgCol = 0;
 	zero = 0;
-	//m = new Matrix;
-	if (true) { //DEBUG
-		m = new Matrix(12); //plansza wczytana z pliku
-	}
-	srand(time(NULL));
+	m = new Matrix(12); //plansza wczytana z pliku
+	srand((unsigned int)time(NULL));
 }
 
 CMain::~CMain() {
@@ -42,7 +39,7 @@ int CMain::run() {
 		}
 		m->printMatrix(startX + 1, startY + 1);
 
-		printMenu(55, 1);
+		printMenu(20, 1);
 
 
 
@@ -84,8 +81,7 @@ int CMain::run() {
 			// TODO: podpowiedz
 		}
 		else if (znak == 'r') {
-			delete m;
-			m = new Matrix();
+			nowaGra();
 			// TODO: wybieranie planszy z pliku
 		}
 		else if (znak == ' ') textCol = (textCol + 1) % 16;
@@ -155,19 +151,59 @@ void CMain::printBorder() {
 	}
 }
 
-void Matrix::fill_random_pola() {
-	int prob_nieudanych = 0;
-	int udanych = 0;
-	for (int i = 0; i < size; i++) {
-		if (fill_random_pole()) {
-			udanych++;
+int CMain::pobierzRozmiar() {
+
+	int startX_pisania = wherex();
+	char znak;
+	bool podanoParzysta = true;
+	int x = wherex();
+	int y = wherey();
+	int size = 0;
+	do
+	{
+		do {
+			znak = getch();
+			if (znak == '\r') break;	//enter
+			else if (znak == 0x08) {	//backspace
+				x = wherex();
+				if (startX_pisania < x) {
+					putchar(znak);
+					putchar(' ');
+					putchar(znak);
+					size /= 10;
+				}
+
+			}
+			else if (znak >= '0' && znak <= '9') {
+				putchar(znak);
+				size *= 10;
+				size += znak - 0x30;
+
+			}
+		} while (true);
+		if (size < 2 || size % 2 == 1) {
+			gotoxy(startX_pisania, y + 1);
+			printf("Podano nieparzysta liczbe lub za maly rozmiar!");
+			podanoParzysta = false;
+			size = 0;
+			int charsToDelete = wherex() - startX_pisania;
+			gotoxy(startX_pisania, y);
+			for (int i = 0; i < charsToDelete; i++)
+				putch(' ');
+			gotoxy(startX_pisania, y);
 		}
 		else {
-			prob_nieudanych++;
+			podanoParzysta = true;
 		}
-		if (prob_nieudanych >= ile_prob_uzupelnienia)
-			return;
-		if (udanych >= ile_randomowych_pol_uzupelnic)
-			return;
-	}
+	} while (!podanoParzysta);
+	return size;
+}
+
+void CMain::nowaGra() {
+	clrscr();
+	gotoxy(0, 0);
+	cputs("Podaj rozmiar planszy: ");
+	delete m;
+	int size = pobierzRozmiar();
+	m = new Matrix(size);
 }

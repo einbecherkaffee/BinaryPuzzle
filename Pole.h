@@ -9,7 +9,7 @@ public:
 	Point p;
 	bool preset;
 	Pole(int x, int y) : p(x, y) {
-		znak = p.x % 2 + 0x30;
+		znak = '.';
 		preset = false;
 	}
 	Pole(int x, int y, char zn) : Pole(x, y) {

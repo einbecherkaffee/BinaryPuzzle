@@ -31,6 +31,7 @@ public:
 	int get_supposed_value(int x, int y, char c, char input);
 	bool fill_random_pole();
 	void fill_random_pola();
+	void clear(int x, int y);
 	
 };
 #endif // !MATRIX_H

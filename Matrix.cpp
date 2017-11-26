@@ -263,3 +263,7 @@ void Matrix::fill_random_pola() {
 			return;
 	}
 }
+
+void Matrix::clear(int x, int y) {
+	matrix[y][x]->setchar('.');
+}

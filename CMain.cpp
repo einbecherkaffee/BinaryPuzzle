@@ -21,19 +21,14 @@ CMain::~CMain() {
 }
 
 int CMain::run() {
+	int x, y;
 	do {
-		// ustawiamy czarny kolor t³a, z którego bêdziemy
-		// korzystali rysuj¹c po ekranie
-		// proszê zerkn¹æ do conio2.h na listê dostêpnych kolorów
 		textbackground(BLACK);
-		// czyœcimy ekran: wype³niamy spacjami z ustawionym kolrem t³a
 		clrscr();
 		textcolor(7);
 
-
-		// wypisanie planszy od miejsca x,y (konsola zaczyna siê od (1,1)
-		printBorder();
-		if (m->noerrors == false) {
+		printBorder(); // wypisanie planszy od miejsca x,y (konsola zaczyna siê od (1,1)
+		if (m->noerrors == false) { // TODO: sprawdziæ czy potrzebne
 			printf("An error occured!");
 			return -1;
 		}
@@ -52,6 +47,8 @@ int CMain::run() {
 
 		zero = 0;
 		znak = getch();
+		x = consoleX - 1 - startX;
+		y = consoleY - 1 - startY;
 		if (znak == 0) {
 			zero = 1;
 			znak = getch();
@@ -66,7 +63,7 @@ int CMain::run() {
 				znak = '0';
 			// wpisz znak do planszy w pozycji x, y
 			// TODO: b³¹d gdy kursor jest poza plansz¹
-			m->setchar(consoleX - 1 - startX, consoleY - 1 - startY, znak);
+			m->setchar(x, y, znak);
 		}
 		else if (znak == 'n') {
 			// TODO: nowa gra
@@ -83,6 +80,9 @@ int CMain::run() {
 		else if (znak == 'r') {
 			nowaGra();
 			// TODO: wybieranie planszy z pliku
+		}
+		else if (znak == '.') {
+			m->clear(x, y);
 		}
 		else if (znak == ' ') textCol = (textCol + 1) % 16;
 		else if (znak == 0x0d) bgCol = (bgCol + 1) % 16;

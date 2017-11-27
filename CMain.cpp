@@ -26,7 +26,10 @@ int CMain::run() {
 		textbackground(BLACK);
 		clrscr();
 		textcolor(7);
-
+		x = consoleX - 1 - startX;
+		y = consoleY - 1 - startY;
+		posx = x;
+		posy = y;
 		printBorder(); // wypisanie planszy od miejsca x,y (konsola zaczyna siê od (1,1)
 		if (m->noerrors == false) { // TODO: sprawdziæ czy potrzebne
 			printf("An error occured!");
@@ -47,8 +50,6 @@ int CMain::run() {
 
 		zero = 0;
 		znak = getch();
-		x = consoleX - 1 - startX;
-		y = consoleY - 1 - startY;
 		if (znak == 0) {
 			zero = 1;
 			znak = getch();
@@ -121,12 +122,32 @@ void CMain::printMenu(int x, int y) {
 		putchar(consoleY / 10 + 0x30);
 	putchar(consoleY % 10 + 0x30);
 
+	cputs("//");
+	if (posx >= 10)
+		putchar(posx / 10 + 0x30);
+	putchar(posx % 10 + 0x30);
+
+	putchar(' ');
+	if (posy >= 10)
+		putchar(posy / 10 + 0x30);
+	putchar(posy % 10 + 0x30);
+	
+
 
 	gotoxy(x, y + 6);
 	cputs("|| ");
 	cputs(txt);
 	gotoxy(x, y + 7);
+	cputs("|| Mozliwe wartosci:");
+	if (m->validate(posx, posy, '0'))
+		putchar('0');
+	if (m->validate(posx, posy, '1'))
+		putchar('1');
+
+	gotoxy(x, y + 8);
 	cputs("*=====+=====+=====+=====+=====*");
+
+	//drukowane boków
 	for (int i = 1; i < 7; i++) {
 		gotoxy(x + 29, y + i);
 		cputs("||");

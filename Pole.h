@@ -30,6 +30,12 @@ public:
 			znak = c;
 		}
 	}
+	void setchar_perm(char c) {
+		if (preset == false) {
+			znak = c;
+			preset = true;
+		}
+	}
 	int x() {
 		return p.x;
 	}

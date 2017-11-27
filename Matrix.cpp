@@ -105,14 +105,12 @@ bool Matrix::validate(int x, int y, char znak) {
 				if (x < size - 1)
 					if (matrix[y][x + 1]->znak == znak)
 						return false;
-
 			}
 	case 3:
 		if (x < size - 1)
 			if (matrix[y][x + 1]->znak == znak) {
-				if (x < size - 2 && matrix[y][x]->znak == znak)
+				if (x < size - 2 && matrix[y][x + 2]->znak == znak)
 					return false;
-
 			}
 	}
 	// zasada 2)
@@ -236,12 +234,12 @@ bool Matrix::fill_random_pole() {
 	int random_znak = rand() % 2 + '0';
 	if (matrix[y][x]->znak == '.') {
 		if (validate(x, y, random_znak)) {
-			matrix[y][x]->setchar(random_znak);
+			matrix[y][x]->setchar_perm(random_znak);
 			return true;
 		}
 		random_znak = random_znak == '0' ? '1' : '0';
 		if (validate(x, y, random_znak)) {
-			matrix[y][x]->setchar(random_znak);
+			matrix[y][x]->setchar_perm(random_znak);
 			return true;
 		}
 	}

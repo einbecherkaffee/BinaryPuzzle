@@ -59,6 +59,22 @@ Matrix::Matrix(int size) {
 	}
 }
 
+Matrix::Matrix(int size, bool a) {
+	this->size = size;
+	noerrors = true;
+	matrix = new Pole**[size];
+	for (int i = 0; i < size; i++) {
+		matrix[i] = new Pole*[size];
+	}
+
+
+	for (int i = 0; i < size; i++) {
+		for (int j = 0; j < size; j++) {
+			matrix[i][j] = new Pole(j, i);
+		}
+	}
+}
+
 
 Matrix::~Matrix() {
 	if (!matrix)

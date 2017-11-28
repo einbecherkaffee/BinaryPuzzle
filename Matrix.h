@@ -21,6 +21,8 @@ public:
 public:
 	Matrix();
 	Matrix(int size);
+	Matrix(int size, 
+		bool a);
 	~Matrix();
 
 	bool validate(int x, int y, char znak);

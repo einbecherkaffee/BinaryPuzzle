@@ -19,6 +19,8 @@ public:
 	void printBorder();
 	int pobierzRozmiar();
 	void nowaGra();
+	void zapisz();
+	void wczytaj();
 };
 
 #endif // !CMAIN_H

@@ -66,6 +66,9 @@ int CMain::run() {
 			// TODO: b³¹d gdy kursor jest poza plansz¹
 			m->setchar(x, y, znak);
 		}
+		else if (znak == 'l') {
+			wczytaj();
+		}
 		else if (znak == 'n') {
 			// TODO: nowa gra
 			if (m->noerrors)
@@ -81,6 +84,9 @@ int CMain::run() {
 		else if (znak == 'r') {
 			nowaGra();
 			// TODO: wybieranie planszy z pliku
+		}
+		else if (znak == 's') {
+			zapisz();
 		}
 		else if (znak == '.') {
 			m->clear(x, y);
@@ -131,7 +137,7 @@ void CMain::printMenu(int x, int y) {
 	if (posy >= 10)
 		putchar(posy / 10 + 0x30);
 	putchar(posy % 10 + 0x30);
-	
+
 
 
 	gotoxy(x, y + 6);
@@ -227,4 +233,131 @@ void CMain::nowaGra() {
 	delete m;
 	int size = pobierzRozmiar();
 	m = new Matrix(size);
+}
+
+void CMain::zapisz() {
+	char nazwa_pliku[255];
+	int startX_pisania = wherex();
+	char znak;
+	bool podanoParzysta = true;
+	int x = wherex();
+	int y = wherey();
+	int index = 0;
+	do
+	{
+		clrscr();
+		printf("Podaj nazwe pliku: ");
+		do {
+			znak = getch();
+			if (znak == '\r') break;	//enter
+			else if (znak == 0x08) {	//backspace
+				x = wherex();
+				if (startX_pisania < x) {
+					putchar(znak);
+					putchar(' ');
+					putchar(znak);
+					index--;
+				}
+
+			}
+			else if ((znak >= '0' && znak <= '9') || (znak >= 'a' && znak <= 'z') || (znak >= 'A' && znak <= 'Z')) {
+				putchar(znak);
+				nazwa_pliku[index] = znak;
+				index++;
+
+			}
+		} while (true);
+	} while (index < 1);
+	nazwa_pliku[index] = '.';
+	nazwa_pliku[index + 1] = 't';
+	nazwa_pliku[index + 2] = 'x';
+	nazwa_pliku[index + 3] = 't';
+	nazwa_pliku[index + 4] = '\0';
+	FILE* plik = fopen(nazwa_pliku, "w");
+	if (plik != NULL) {
+		fprintf(plik, "%d\n", m->getSize());
+		char* linia = new char[2 * m->getSize() + 2];
+		linia[m->getSize() * 2] = '\n';
+		linia[m->getSize() * 2 + 1] = '\0';
+		for (int j = 0; j < m->getSize(); j++) {
+			for (int i = 0; i < m->getSize(); i++) {
+				linia[2 * i] = m->matrix[j][i]->znak;
+				linia[2 * i + 1] = m->matrix[j][i]->preset ? 't' : 'f';
+			}
+			fputs(linia, plik);
+		}
+		delete linia;
+		fclose(plik);
+	}
+	else {
+		cputs("Blad przy otwieraniu pliku!");
+		system("pause");
+	}
+}
+
+void CMain::wczytaj() {
+	char nazwa_pliku[255];
+	int startX_pisania = wherex();
+	char znak;
+	bool podanoParzysta = true;
+	int x = wherex();
+	int y = wherey();
+	int index = 0;
+	do
+	{
+		clrscr();
+		printf("Podaj nazwe pliku: ");
+		do {
+			znak = getch();
+			if (znak == '\r') break;	//enter
+			else if (znak == 0x08) {	//backspace
+				x = wherex();
+				if (startX_pisania < x) {
+					putchar(znak);
+					putchar(' ');
+					putchar(znak);
+					index--;
+				}
+
+			}
+			else if ((znak >= '0' && znak <= '9') || (znak >= 'a' && znak <= 'z') || (znak >= 'A' && znak <= 'Z')) {
+				putchar(znak);
+				nazwa_pliku[index] = znak;
+				index++;
+
+			}
+		} while (true);
+	} while (index < 1);
+	nazwa_pliku[index] = '.';
+	nazwa_pliku[index + 1] = 't';
+	nazwa_pliku[index + 2] = 'x';
+	nazwa_pliku[index + 3] = 't';
+	nazwa_pliku[index + 4] = '\0';
+	FILE* plik = fopen(nazwa_pliku, "r");
+	if (plik != NULL) {
+		int size = 0;
+		fscanf(plik, "%d\n", &size);
+		char* linia = new char[2 * size+2];
+
+		delete m;
+		m = new Matrix(size, true);
+		linia[size * 2] = '\n';
+		linia[size * 2 + 1] = '\0';
+		for (int j = 0; j < size; j++) {
+			fgets(linia, size * 2 + 2, plik);
+			for (int i = 0; i < size; i++) {
+				if (linia[2 * i + 1] == 't')
+					m->matrix[j][i]->setchar_perm(linia[2 * i]);
+				else
+					m->matrix[j][i]->setchar(linia[2 * i]);
+			}
+
+		}
+		delete[] linia;
+		fclose(plik);
+	}
+	else {
+		cputs("Blad przy otwieraniu pliku!");
+		system("pause");
+	}
 }

@@ -4,7 +4,7 @@
 #include "CMain.h"
 #include "Matrix.h"
 CMain::CMain() {
-	startX = 5;
+	startX = 40;
 	startY = 5;
 	znak = 0;
 	consoleX = startX + 1;
@@ -31,13 +31,13 @@ int CMain::run() {
 		posx = x;
 		posy = y;
 		printBorder(); // wypisanie planszy od miejsca x,y (konsola zaczyna siê od (1,1)
-		if (m->noerrors == false) { // TODO: sprawdziæ czy potrzebne
-			printf("An error occured!");
-			return -1;
-		}
+		//if (m->noerrors == false) { // TODO: sprawdziæ czy potrzebne
+		//	printf("An error occured!");
+		//	return -1;
+		//}
 		m->printMatrix(startX + 1, startY + 1);
 
-		printMenu(20, 1);
+		printMenu(1, 1);
 
 
 
@@ -66,13 +66,14 @@ int CMain::run() {
 			// TODO: b³¹d gdy kursor jest poza plansz¹
 			m->setchar(x, y, znak);
 		}
+		else if (znak == 'j') {
+
+		}
 		else if (znak == 'l') {
-			wczytaj();
+			load();
 		}
 		else if (znak == 'n') {
-			// TODO: nowa gra
-			if (m->noerrors)
-				delete m;
+			delete m;
 			m = new Matrix(12);
 		}
 		else if (znak == 'o') {
@@ -82,11 +83,11 @@ int CMain::run() {
 			// TODO: podpowiedz
 		}
 		else if (znak == 'r') {
-			nowaGra();
+			startNewGame();
 			// TODO: wybieranie planszy z pliku
 		}
 		else if (znak == 's') {
-			zapisz();
+			save();
 		}
 		else if (znak == '.') {
 			m->clear(x, y);
@@ -178,7 +179,7 @@ void CMain::printBorder() {
 	}
 }
 
-int CMain::pobierzRozmiar() {
+int CMain::getUserInput() {
 
 	int startX_pisania = wherex();
 	char znak;
@@ -226,16 +227,16 @@ int CMain::pobierzRozmiar() {
 	return size;
 }
 
-void CMain::nowaGra() {
+void CMain::startNewGame() {
 	clrscr();
 	gotoxy(0, 0);
 	cputs("Podaj rozmiar planszy: ");
 	delete m;
-	int size = pobierzRozmiar();
+	int size = getUserInput();
 	m = new Matrix(size);
 }
 
-void CMain::zapisz() {
+void CMain::save() {
 	char nazwa_pliku[255];
 	int startX_pisania = wherex();
 	char znak;
@@ -281,8 +282,8 @@ void CMain::zapisz() {
 		linia[m->getSize() * 2 + 1] = '\0';
 		for (int j = 0; j < m->getSize(); j++) {
 			for (int i = 0; i < m->getSize(); i++) {
-				linia[2 * i] = m->matrix[j][i]->znak;
-				linia[2 * i + 1] = m->matrix[j][i]->preset ? 't' : 'f';
+				linia[2 * i] = m->board[j][i]->znak;
+				linia[2 * i + 1] = m->board[j][i]->preset ? 't' : 'f';
 			}
 			fputs(linia, plik);
 		}
@@ -295,7 +296,7 @@ void CMain::zapisz() {
 	}
 }
 
-void CMain::wczytaj() {
+void CMain::load() {
 	char nazwa_pliku[255];
 	int startX_pisania = wherex();
 	char znak;
@@ -337,7 +338,7 @@ void CMain::wczytaj() {
 	if (plik != NULL) {
 		int size = 0;
 		fscanf(plik, "%d\n", &size);
-		char* linia = new char[2 * size+2];
+		char* linia = new char[2 * size + 2];
 
 		delete m;
 		m = new Matrix(size, true);
@@ -347,9 +348,9 @@ void CMain::wczytaj() {
 			fgets(linia, size * 2 + 2, plik);
 			for (int i = 0; i < size; i++) {
 				if (linia[2 * i + 1] == 't')
-					m->matrix[j][i]->setchar_perm(linia[2 * i]);
+					m->board[j][i]->setchar_perm(linia[2 * i]);
 				else
-					m->matrix[j][i]->setchar(linia[2 * i]);
+					m->board[j][i]->setchar(linia[2 * i]);
 			}
 
 		}

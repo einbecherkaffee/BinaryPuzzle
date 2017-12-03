@@ -8,12 +8,10 @@
 class Matrix {
 private:
 	int size = 0;
-	const int ile_randomowych_pol_uzupelnic = 5;
-	const int ile_prob_uzupelnienia = 50;
+	const int randomFieldsToFill = 5;
+	const int maxFillingTries = 50;
 public:
-	Pole ***matrix;	// TODO: dodaæ getter
-	
-	bool noerrors;
+	Pole*** board;	// TODO: dodaæ getter
 
 	int getSize();
 	void setSize(int size);
@@ -21,8 +19,7 @@ public:
 public:
 	Matrix();
 	Matrix(int size);
-	Matrix(int size, 
-		bool a);
+	Matrix(int size, bool a);
 	~Matrix();
 
 	bool validate(int x, int y, char znak);

@@ -1,0 +1,13 @@
+12
+.f.f.f1t.f.f.f.f.f.f.f1t
+.f0t.f.f.f.f.f.f1t.f.f.f
+.f.f.f.f.f0t.f.f.f.f.f.f
+.f0t.f1t.f0t.f0t.f0t.f0t
+1t.f1t.f.f.f.f0t.f.f1t.f
+.f.f.f.f.f0t.f.f1t.f.f.f
+.f.f1t1t.f.f.f.f1t.f.f.f
+0t.f.f.f.f.f0t.f.f.f.f0t
+.f1t.f.f1t.f.f.f.f.f1t.f
+.f.f0t.f.f0t.f0t.f.f.f.f
+.f.f0t.f.f0t0t.f.f.f.f0t
+.f.f.f1t.f.f0t.f.f1t.f.f

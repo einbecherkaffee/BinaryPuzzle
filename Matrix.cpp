@@ -8,7 +8,6 @@
 Matrix::Matrix() { }
 
 Matrix::Matrix(int size) {
-	noerrors = true;
 	setSize(size);
 
 	char filename[] = "plansza00x00.txt";
@@ -25,9 +24,9 @@ Matrix::Matrix(int size) {
 
 	FILE* file = fopen(filename, "r");
 	if (file != NULL) {
-		matrix = new Pole**[size];
+		board = new Pole**[size];
 		for (int i = 0; i < size; i++) {
-			matrix[i] = new Pole*[size];
+			board[i] = new Pole*[size];
 		}
 
 
@@ -35,22 +34,22 @@ Matrix::Matrix(int size) {
 		for (int i = 0; i < size; i++) {
 			fread(rzad, 1, size + 1, file);
 			for (int j = 0; j < size; j++) {
-				matrix[i][j] = new Pole(j, i, rzad[j]);
+				board[i][j] = new Pole(j, i, rzad[j]);
 			}
 		}
 		fclose(file);
 	}
 	else {
-		matrix = new Pole**[size];
+		board = new Pole**[size];
 		for (int i = 0; i < size; i++) {
-			matrix[i] = new Pole*[size];
+			board[i] = new Pole*[size];
 		}
 
 
 		rzad = new char[size + 1];
 		for (int i = 0; i < size; i++) {
 			for (int j = 0; j < size; j++) {
-				matrix[i][j] = new Pole(j, i, '.');
+				board[i][j] = new Pole(j, i, '.');
 			}
 		}
 		for (int i = 0; i < size; i++) {
@@ -61,27 +60,26 @@ Matrix::Matrix(int size) {
 
 Matrix::Matrix(int size, bool a) {
 	this->size = size;
-	noerrors = true;
-	matrix = new Pole**[size];
+	board = new Pole**[size];
 	for (int i = 0; i < size; i++) {
-		matrix[i] = new Pole*[size];
+		board[i] = new Pole*[size];
 	}
 
 
 	for (int i = 0; i < size; i++) {
 		for (int j = 0; j < size; j++) {
-			matrix[i][j] = new Pole(j, i);
+			board[i][j] = new Pole(j, i);
 		}
 	}
 }
 
 
 Matrix::~Matrix() {
-	if (!matrix)
+	if (!board)
 		for (int i = 0; i < size; i++) {
-			delete matrix[i];
+			delete board[i];
 		}
-	delete matrix;
+	delete board;
 }
 
 int Matrix::getSize() {
@@ -93,39 +91,39 @@ void Matrix::setSize(int s) {
 }
 
 bool Matrix::validate(int x, int y, char znak) {
-	Pole *a = matrix[y][x];
+	Pole *a = board[y][x];
 	if (a->preset)
 		return false;
 	// zasada 1)
 	switch (0) {
 	case 0:
 		if (y > 0)
-			if (matrix[y - 1][x]->znak == znak) {
-				if (y > 1 && matrix[y - 2][x]->znak == znak)
+			if (board[y - 1][x]->znak == znak) {
+				if (y > 1 && board[y - 2][x]->znak == znak)
 					return false;
 				if (y < size - 1)
-					if (matrix[y + 1][x]->znak == znak)
+					if (board[y + 1][x]->znak == znak)
 						return false;
 			}
 	case 1:
 		if (y < size - 1)
-			if (matrix[y + 1][x]->znak == znak) {
-				if (y < size - 2 && matrix[y + 2][x]->znak == znak)
+			if (board[y + 1][x]->znak == znak) {
+				if (y < size - 2 && board[y + 2][x]->znak == znak)
 					return false;
 			}
 	case 2:
 		if (x > 0)
-			if (matrix[y][x - 1]->znak == znak) {
-				if (x > 1 && matrix[y][x - 2]->znak == znak)
+			if (board[y][x - 1]->znak == znak) {
+				if (x > 1 && board[y][x - 2]->znak == znak)
 					return false;
 				if (x < size - 1)
-					if (matrix[y][x + 1]->znak == znak)
+					if (board[y][x + 1]->znak == znak)
 						return false;
 			}
 	case 3:
 		if (x < size - 1)
-			if (matrix[y][x + 1]->znak == znak) {
-				if (x < size - 2 && matrix[y][x + 2]->znak == znak)
+			if (board[y][x + 1]->znak == znak) {
+				if (x < size - 2 && board[y][x + 2]->znak == znak)
 					return false;
 			}
 	}
@@ -134,10 +132,10 @@ bool Matrix::validate(int x, int y, char znak) {
 		sumy = 0;
 	for (int i = 0; i < size; i++) {
 
-		if (matrix[y][i]->znak == znak) { // sprawdzanie rzêdu
+		if (board[y][i]->znak == znak) { // sprawdzanie rzêdu
 			sumy++;
 		}
-		if (matrix[i][x]->znak == znak) { // sprawdzanie kolumny
+		if (board[i][x]->znak == znak) { // sprawdzanie kolumny
 			sumx++;
 		}
 		if (sumx >= size / 2 || sumy >= size / 2)
@@ -149,11 +147,12 @@ bool Matrix::validate(int x, int y, char znak) {
 	if (completed(x, y, 'x')) { // sprawdzanie rzêdów
 		sum = get_supposed_value(x, y, 'x', znak);
 		for (int i = 0; i < size; i++) {
-			if (completed(x, i, 'x')) {
-				sum_compare = get_value(x, i, 'x');
-				if (sum_compare == sum)
-					return false;
-			}
+			if (i != x)
+				if (completed(x, i, 'x')) {
+					sum_compare = get_value(x, i, 'x');
+					if (sum_compare == sum)
+						return false;
+				}
 		}
 	}
 	sum_compare = sum = 0;
@@ -174,7 +173,7 @@ void Matrix::printMatrix(int x, int y) {
 	Pole* p;
 	for (int i = 0; i < size; i++) {
 		for (int j = 0; j < size; j++) {
-			p = matrix[i][j];
+			p = board[i][j];
 			if (p->preset) {
 				/*textbackground(WHITE);*/
 				textcolor(LIGHTGREEN);
@@ -189,7 +188,7 @@ void Matrix::printMatrix(int x, int y) {
 
 bool Matrix::setchar(int x, int y, char c) {
 	if (validate(x, y, c)) {
-		matrix[y][x]->setchar(c);
+		board[y][x]->setchar(c);
 		return true;
 	}
 	return false;
@@ -199,7 +198,7 @@ bool Matrix::completed(int x, int y, char c) {
 	// TODO: naprawiæ funkcjê, ¿eby sensowenie dzia³a³a
 	int value = c == 'x' ? x : y;
 	for (int i = 0; i < size; i++) {
-		if (matrix[y][x]->znak == '.') {
+		if (board[y][x]->znak == '.') {
 			return false;
 		}
 	}
@@ -211,12 +210,12 @@ int Matrix::get_value(int x, int y, char c) {
 	int mnoznik = 1;
 	if (c == 'x') {
 		for (int i = 0; i < size; i++, mnoznik *= 2) {
-			sum += (matrix[y][i]->znak - '0')*mnoznik;
+			sum += (board[y][i]->znak - '0')*mnoznik;
 		}
 	}
 	if (c == 'y') {
 		for (int i = 0; i < size; i++, mnoznik *= 2) {
-			sum += (matrix[i][x]->znak - '0')*mnoznik;
+			sum += (board[i][x]->znak - '0')*mnoznik;
 		}
 	}
 	return sum;
@@ -230,7 +229,7 @@ int Matrix::get_supposed_value(int x, int y, char c, char input) {
 			if (i == x)
 				sum += input - '0';
 			else
-				sum += (matrix[y][i]->znak - '0')*mnoznik;
+				sum += (board[y][i]->znak - '0')*mnoznik;
 		}
 	}
 	if (c == 'y') {
@@ -238,7 +237,7 @@ int Matrix::get_supposed_value(int x, int y, char c, char input) {
 			if (i == y)
 				sum += input - '0';
 			else
-				sum += (matrix[i][x]->znak - '0')*mnoznik;
+				sum += (board[i][x]->znak - '0')*mnoznik;
 		}
 	}
 	return sum;
@@ -248,14 +247,14 @@ bool Matrix::fill_random_pole() {
 	int x = (int)rand() % size;
 	int y = (int)rand() % size;
 	int random_znak = rand() % 2 + '0';
-	if (matrix[y][x]->znak == '.') {
+	if (board[y][x]->znak == '.') {
 		if (validate(x, y, random_znak)) {
-			matrix[y][x]->setchar_perm(random_znak);
+			board[y][x]->setchar_perm(random_znak);
 			return true;
 		}
 		random_znak = random_znak == '0' ? '1' : '0';
 		if (validate(x, y, random_znak)) {
-			matrix[y][x]->setchar_perm(random_znak);
+			board[y][x]->setchar_perm(random_znak);
 			return true;
 		}
 	}
@@ -271,13 +270,13 @@ void Matrix::fill_random_pola() {
 		else {
 			prob_nieudanych++;
 		}
-		if (prob_nieudanych >= ile_prob_uzupelnienia)
+		if (prob_nieudanych >= maxFillingTries)
 			return;
-		if (udanych >= ile_randomowych_pol_uzupelnic)
+		if (udanych >= randomFieldsToFill)
 			return;
 	}
 }
 
 void Matrix::clear(int x, int y) {
-	matrix[y][x]->setchar('.');
+	board[y][x]->setchar('.');
 }

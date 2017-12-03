@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 #include "conio2.h"
-#include "Pole.h"
+#include "Field.h"
 
 class Matrix {
 private:
@@ -11,7 +11,7 @@ private:
 	const int randomFieldsToFill = 5;
 	const int maxFillingTries = 50;
 public:
-	Pole*** board;	// TODO: dodaæ getter
+	Field*** board;	// TODO: dodaæ getter
 
 	int getSize();
 	void setSize(int size);
@@ -22,14 +22,14 @@ public:
 	Matrix(int size, bool a);
 	~Matrix();
 
-	bool validate(int x, int y, char znak);
+	bool validate(int x, int y, char symbol);
 	void printMatrix(int x, int y);
-	bool setchar(int x, int y, char c);
-	bool completed(int x, int y, char c);
-	int get_value(int x, int y, char c);
-	int get_supposed_value(int x, int y, char c, char input);
-	bool fill_random_pole();
-	void fill_random_pola();
+	bool setChar(int x, int y, char c);
+	bool isCompleted(int x, int y, char c);
+	int getValue(int x, int y, char c);
+	int getSupposedValue(int x, int y, char c, char input);
+	bool fillRandomField();
+	void fillRandomFields();
 	void clear(int x, int y);
 	
 };

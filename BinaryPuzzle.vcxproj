@@ -155,7 +155,7 @@
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="conio2.h" />
     <ClInclude Include="Point.h" />
-    <ClInclude Include="Pole.h" />
+    <ClInclude Include="Field.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

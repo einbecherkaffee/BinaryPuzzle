@@ -6,7 +6,7 @@
 CMain::CMain() {
 	startX = 40;
 	startY = 5;
-	znak = 0;
+	symbol = 0;
 	consoleX = startX + 1;
 	consoleY = startY + 1;
 	textCol = 7;
@@ -49,52 +49,52 @@ int CMain::run() {
 
 
 		zero = 0;
-		znak = getch();
-		if (znak == 0) {
+		symbol = getch();
+		if (symbol == 0) {
 			zero = 1;
-			znak = getch();
+			symbol = getch();
 
-			if (znak == 0x48 && consoleY > startY + 1) consoleY--;
-			else if (znak == 0x50 && consoleY - m->getSize() < startY) consoleY++;
-			else if (znak == 0x4b && consoleX > startX + 1) consoleX--;
-			else if (znak == 0x4d && consoleX - m->getSize() < startX) consoleX++;
+			if (symbol == 0x48 && consoleY > startY + 1) consoleY--;
+			else if (symbol == 0x50 && consoleY - m->getSize() < startY) consoleY++;
+			else if (symbol == 0x4b && consoleX > startX + 1) consoleX--;
+			else if (symbol == 0x4d && consoleX - m->getSize() < startX) consoleX++;
 		}
-		else if (znak == '1' || znak == '0' || znak == '2') {
-			if (znak == '2')
-				znak = '0';
+		else if (symbol == '1' || symbol == '0' || symbol == '2') {
+			if (symbol == '2')
+				symbol = '0';
 			// wpisz znak do planszy w pozycji x, y
 			// TODO: b³¹d gdy kursor jest poza plansz¹
-			m->setchar(x, y, znak);
+			m->setChar(x, y, symbol);
 		}
-		else if (znak == 'j') {
+		else if (symbol == 'j') {
 
 		}
-		else if (znak == 'l') {
+		else if (symbol == 'l') {
 			load();
 		}
-		else if (znak == 'n') {
+		else if (symbol == 'n') {
 			delete m;
 			m = new Matrix(12);
 		}
-		else if (znak == 'o') {
-			m->fill_random_pola();
+		else if (symbol == 'o') {
+			m->fillRandomFields();
 		}
-		else if (znak == 'p') {
+		else if (symbol == 'p') {
 			// TODO: podpowiedz
 		}
-		else if (znak == 'r') {
+		else if (symbol == 'r') {
 			startNewGame();
 			// TODO: wybieranie planszy z pliku
 		}
-		else if (znak == 's') {
+		else if (symbol == 's') {
 			save();
 		}
-		else if (znak == '.') {
+		else if (symbol == '.') {
 			m->clear(x, y);
 		}
-		else if (znak == ' ') textCol = (textCol + 1) % 16;
-		else if (znak == 0x0d) bgCol = (bgCol + 1) % 16;
-	} while (znak != 'q' && znak != 0x1b);
+		else if (symbol == ' ') textCol = (textCol + 1) % 16;
+		else if (symbol == 0x0d) bgCol = (bgCol + 1) % 16;
+	} while (symbol != 'q' && symbol != 0x1b);
 	return 0;
 }
 
@@ -115,8 +115,8 @@ void CMain::printMenu(int x, int y) {
 	cputs("|| enter = zmiana koloru tla");
 
 	// wypisujemy na ekranie kod ostatnio naciœniêtego klawisza
-	if (zero) sprintf(txt, "kod klawisza: 0x00 0x%02x", znak);
-	else sprintf(txt, "kod klawisza: 0x%02x", znak);
+	if (zero) sprintf(txt, "kod klawisza: 0x00 0x%02x", symbol);
+	else sprintf(txt, "kod klawisza: 0x%02x", symbol);
 	gotoxy(x, y + 5);
 	//wyswietlanie pozycji kursora
 	cputs("|| kursor: ");
@@ -182,7 +182,7 @@ void CMain::printBorder() {
 int CMain::getUserInput() {
 
 	int startX_pisania = wherex();
-	char znak;
+	char symbol;
 	bool podanoParzysta = true;
 	int x = wherex();
 	int y = wherey();
@@ -190,22 +190,22 @@ int CMain::getUserInput() {
 	do
 	{
 		do {
-			znak = getch();
-			if (znak == '\r') break;	//enter
-			else if (znak == 0x08) {	//backspace
+			symbol = getch();
+			if (symbol == '\r') break;	//enter
+			else if (symbol == 0x08) {	//backspace
 				x = wherex();
 				if (startX_pisania < x) {
-					putchar(znak);
+					putchar(symbol);
 					putchar(' ');
-					putchar(znak);
+					putchar(symbol);
 					size /= 10;
 				}
 
 			}
-			else if (znak >= '0' && znak <= '9') {
-				putchar(znak);
+			else if (symbol >= '0' && symbol <= '9') {
+				putchar(symbol);
 				size *= 10;
-				size += znak - 0x30;
+				size += symbol - 0x30;
 
 			}
 		} while (true);
@@ -239,7 +239,7 @@ void CMain::startNewGame() {
 void CMain::save() {
 	char nazwa_pliku[255];
 	int startX_pisania = wherex();
-	char znak;
+	char symbol;
 	bool podanoParzysta = true;
 	int x = wherex();
 	int y = wherey();
@@ -249,21 +249,21 @@ void CMain::save() {
 		clrscr();
 		printf("Podaj nazwe pliku: ");
 		do {
-			znak = getch();
-			if (znak == '\r') break;	//enter
-			else if (znak == 0x08) {	//backspace
+			symbol = getch();
+			if (symbol == '\r') break;	//enter
+			else if (symbol == 0x08) {	//backspace
 				x = wherex();
 				if (startX_pisania < x) {
-					putchar(znak);
+					putchar(symbol);
 					putchar(' ');
-					putchar(znak);
+					putchar(symbol);
 					index--;
 				}
 
 			}
-			else if ((znak >= '0' && znak <= '9') || (znak >= 'a' && znak <= 'z') || (znak >= 'A' && znak <= 'Z')) {
-				putchar(znak);
-				nazwa_pliku[index] = znak;
+			else if ((symbol >= '0' && symbol <= '9') || (symbol >= 'a' && symbol <= 'z') || (symbol >= 'A' && symbol <= 'Z')) {
+				putchar(symbol);
+				nazwa_pliku[index] = symbol;
 				index++;
 
 			}
@@ -282,7 +282,7 @@ void CMain::save() {
 		linia[m->getSize() * 2 + 1] = '\0';
 		for (int j = 0; j < m->getSize(); j++) {
 			for (int i = 0; i < m->getSize(); i++) {
-				linia[2 * i] = m->board[j][i]->znak;
+				linia[2 * i] = m->board[j][i]->symbol;
 				linia[2 * i + 1] = m->board[j][i]->preset ? 't' : 'f';
 			}
 			fputs(linia, plik);
@@ -299,7 +299,7 @@ void CMain::save() {
 void CMain::load() {
 	char nazwa_pliku[255];
 	int startX_pisania = wherex();
-	char znak;
+	char symbol;
 	bool podanoParzysta = true;
 	int x = wherex();
 	int y = wherey();
@@ -309,21 +309,21 @@ void CMain::load() {
 		clrscr();
 		printf("Podaj nazwe pliku: ");
 		do {
-			znak = getch();
-			if (znak == '\r') break;	//enter
-			else if (znak == 0x08) {	//backspace
+			symbol = getch();
+			if (symbol == '\r') break;	//enter
+			else if (symbol == 0x08) {	//backspace
 				x = wherex();
 				if (startX_pisania < x) {
-					putchar(znak);
+					putchar(symbol);
 					putchar(' ');
-					putchar(znak);
+					putchar(symbol);
 					index--;
 				}
 
 			}
-			else if ((znak >= '0' && znak <= '9') || (znak >= 'a' && znak <= 'z') || (znak >= 'A' && znak <= 'Z')) {
-				putchar(znak);
-				nazwa_pliku[index] = znak;
+			else if ((symbol >= '0' && symbol <= '9') || (symbol >= 'a' && symbol <= 'z') || (symbol >= 'A' && symbol <= 'Z')) {
+				putchar(symbol);
+				nazwa_pliku[index] = symbol;
 				index++;
 
 			}
@@ -348,9 +348,9 @@ void CMain::load() {
 			fgets(linia, size * 2 + 2, plik);
 			for (int i = 0; i < size; i++) {
 				if (linia[2 * i + 1] == 't')
-					m->board[j][i]->setchar_perm(linia[2 * i]);
+					m->board[j][i]->setPresetChar(linia[2 * i]);
 				else
-					m->board[j][i]->setchar(linia[2 * i]);
+					m->board[j][i]->setChar(linia[2 * i]);
 			}
 
 		}

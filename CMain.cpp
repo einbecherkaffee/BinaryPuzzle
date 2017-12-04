@@ -84,7 +84,6 @@ int CMain::run() {
 		}
 		else if (symbol == 'r') {
 			startNewGame();
-			// TODO: wybieranie planszy z pliku
 		}
 		else if (symbol == 's') {
 			save();

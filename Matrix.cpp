@@ -196,12 +196,18 @@ bool Matrix::setChar(int x, int y, char c) {
 
 bool Matrix::isCompleted(int x, int y, char c) {
 	// TODO: naprawiæ funkcjê, ¿eby sensowenie dzia³a³a
-	int value = c == 'x' ? x : y;
-	for (int i = 0; i < size; i++) {
-		if (board[y][x]->symbol == '.') {
-			return false;
+	if (c == 'x')
+		for (int i = 0; i < size; i++) {
+			if (board[i][x]->symbol == '.') {
+				return false;
+			}
 		}
-	}
+	if (c == 'y')
+		for (int i = 0; i < size; i++) {
+			if (board[y][i]->symbol == '.') {
+				return false;
+			}
+		}
 	return true;
 }
 

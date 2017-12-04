@@ -50,6 +50,7 @@ int CMain::run() {
 
 		zero = 0;
 		symbol = getch();
+		m->highlightNotFillable = false;
 		if (symbol == 0) {
 			zero = 1;
 			symbol = getch();
@@ -68,6 +69,9 @@ int CMain::run() {
 		}
 		else if (symbol == 'j') {
 
+		}
+		else if (symbol == 'k') {
+			m->highlightNotFillable = true;
 		}
 		else if (symbol == 'l') {
 			load();

@@ -15,6 +15,7 @@ public:
 
 	int getSize();
 	void setSize(int size);
+	bool highlightNotFillable;
 
 public:
 	Matrix();

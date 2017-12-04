@@ -4,10 +4,12 @@
 #include <stdlib.h>
 
 #include "Matrix.h"
+#include "Error.h"
 
 Matrix::Matrix() { }
 
 Matrix::Matrix(int size) {
+	highlightNotFillable = false;
 	setSize(size);
 
 	char filename[] = "plansza00x00.txt";
@@ -91,40 +93,56 @@ void Matrix::setSize(int s) {
 }
 
 bool Matrix::validate(int x, int y, char symbol) {
+	ErrorList* list = new ErrorList;
 	Field *a = board[y][x];
 	if (a->preset)
+
 		return false;
 	// zasada 1)
 	switch (0) {
 	case 0:
 		if (y > 0)
 			if (board[y - 1][x]->symbol == symbol) {
-				if (y > 1 && board[y - 2][x]->symbol == symbol)
+				if (y > 1 && board[y - 2][x]->symbol == symbol) {
+					list->add(new Error("Naruszenie pierwszej zasady"));
 					return false;
+				}
 				if (y < size - 1)
-					if (board[y + 1][x]->symbol == symbol)
+					if (board[y + 1][x]->symbol == symbol) {
+						list->add(new Error("Naruszenie pierwszej zasady"));
 						return false;
+
+					}
 			}
 	case 1:
 		if (y < size - 1)
 			if (board[y + 1][x]->symbol == symbol) {
-				if (y < size - 2 && board[y + 2][x]->symbol == symbol)
+				if (y < size - 2 && board[y + 2][x]->symbol == symbol) {
+					list->add(new Error("Naruszenie pierwszej zasady"));
+
 					return false;
+				}
 			}
 	case 2:
 		if (x > 0)
 			if (board[y][x - 1]->symbol == symbol) {
-				if (x > 1 && board[y][x - 2]->symbol == symbol)
+				if (x > 1 && board[y][x - 2]->symbol == symbol) {
+					list->add(new Error("Naruszenie pierwszej zasady"));
 					return false;
+				}
 				if (x < size - 1)
-					if (board[y][x + 1]->symbol == symbol)
+					if (board[y][x + 1]->symbol == symbol) {
+						list->add(new Error("Naruszenie pierwszej zasady"));
 						return false;
+					}
 			}
 	case 3:
 		if (x < size - 1)
 			if (board[y][x + 1]->symbol == symbol) {
-				if (x < size - 2 && board[y][x + 2]->symbol == symbol)
+				if (x < size - 2 && board[y][x + 2]->symbol == symbol) {
+					list->add(new Error("Naruszenie pierwszej zasady"));
 					return false;
+				}
 			}
 	}
 	// zasada 2)
@@ -138,8 +156,10 @@ bool Matrix::validate(int x, int y, char symbol) {
 		if (board[i][x]->symbol == symbol) { // sprawdzanie kolumny
 			sumx++;
 		}
-		if (sumx >= size / 2 || sumy >= size / 2)
+		if (sumx >= size / 2 || sumy >= size / 2) {
+			list->add(new Error("Naruszenie drugiej zasady"));
 			return false;
+		}
 	}
 	// zasada 3) // rzêdy nie mog¹ byæ takie same
 	int sum = 0,
@@ -150,8 +170,10 @@ bool Matrix::validate(int x, int y, char symbol) {
 			if (i != x)
 				if (isCompleted(x, i, 'x')) {
 					sum_compare = getValue(x, i, 'x');
-					if (sum_compare == sum)
+					if (sum_compare == sum) {
+						list->add(new Error("Naruszenie trzeciej zasady"));
 						return false;
+					}
 				}
 		}
 	}
@@ -161,11 +183,15 @@ bool Matrix::validate(int x, int y, char symbol) {
 		for (int i = 0; i < size; i++) {
 			if (isCompleted(i, y, 'y')) {
 				sum_compare = getValue(i, y, 'y');
-				if (sum_compare == sum)
+				if (sum_compare == sum) {
+					list->add(new Error("Naruszenie trzeciej zasady"));
 					return false;
+				}
 			}
 		}
 	}
+	delete list;
+	//return list
 	return true;
 }
 
@@ -178,9 +204,13 @@ void Matrix::printMatrix(int x, int y) {
 				/*textbackground(WHITE);*/
 				textcolor(LIGHTGREEN);
 			}
+			else if (highlightNotFillable && !(validate(j, i, '0') || validate(j, i, '1'))) {
+				textbackground(CYAN);
+			}
 			p->write(x, y);
 			//textbackground(BLACK);
 			textcolor(WHITE);
+			textbackground(BLACK);
 		}
 	}
 

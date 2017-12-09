@@ -219,6 +219,7 @@ void Matrix::printMatrix(int x, int y) {
 bool Matrix::setChar(int x, int y, char c) {
 	if (validate(x, y, c)) {
 		board[y][x]->setChar(c);
+		board[y][x]->write();
 		return true;
 	}
 	return false;

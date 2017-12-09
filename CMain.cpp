@@ -21,28 +21,35 @@ CMain::~CMain() {
 }
 
 int CMain::run() {
+	const Point menu_pos(2, 2);
 	int x, y;
 	bool b_printKey = false;
+	printMenu(menu_pos.x, menu_pos.y);
+	printBorder(startX, startY, startX + m->getSize() + 1, startY + m->getSize() + 1);
+	m->printMatrix(startX + 1, startY + 1);
 	do {
-		textbackground(BLACK);
-		clrscr();
 		textcolor(7);
 		x = consoleX - 1 - startX;
 		y = consoleY - 1 - startY;
 		posx = x;
 		posy = y;
 
-		printMenu(2, 2);
-		printBorder(startX, startY, startX + m->getSize() + 1, startY + m->getSize() + 1);
-		m->printMatrix(startX + 1, startY + 1);
+		printMenu(menu_pos.x, menu_pos.y);
+
 		if (b_printKey) {
+			clrscr();
 			printKey(1, 1);
 			b_printKey = false;
+
+			if (getch() == 0) {
+				getch();
+			}
+			clrscr();
+			printMenu(menu_pos.x, menu_pos.y);
+			printBorder(startX, startY, startX + m->getSize() + 1, startY + m->getSize() + 1);
+			m->printMatrix(startX + 1, startY + 1);
 		}
-		// rysujemy na ekranie kolorow¹ gwiazdkê
 		gotoxy(consoleX, consoleY);
-		textcolor(textCol);
-		textbackground(bgCol);
 
 
 		zero = 0;
@@ -61,6 +68,7 @@ int CMain::run() {
 			if (symbol == '2')
 				symbol = '0';
 			m->setChar(x, y, symbol);
+			m->board[y][x]->write(startX+1, startY+1);
 		}
 		else if (symbol == 'j') {
 
@@ -70,6 +78,9 @@ int CMain::run() {
 		}
 		else if (symbol == 'l') {
 			load();
+			printMenu(menu_pos.x, menu_pos.y);
+			printBorder(startX, startY, startX + m->getSize() + 1, startY + m->getSize() + 1);
+			m->printMatrix(startX + 1, startY + 1);
 		}
 		else if (symbol == 'n') {
 			delete m;
@@ -77,21 +88,27 @@ int CMain::run() {
 		}
 		else if (symbol == 'o') {
 			m->fillRandomFields();
+			m->printMatrix(startX + 1, startY + 1);
 		}
 		else if (symbol == 'p') {
 			// TODO: podpowiedz
 		}
 		else if (symbol == 'r') {
 			startNewGame();
+			printMenu(menu_pos.x, menu_pos.y);
+			printBorder(startX, startY, startX + m->getSize() + 1, startY + m->getSize() + 1);
+			m->printMatrix(startX + 1, startY + 1);
 		}
 		else if (symbol == 's') {
 			save();
+			printMenu(menu_pos.x, menu_pos.y);
+			printBorder(startX, startY, startX + m->getSize() + 1, startY + m->getSize() + 1);
+			m->printMatrix(startX + 1, startY + 1);
 		}
 		else if (symbol == '.') {
 			m->clear(x, y);
 		}
-		else {
-			// legenda
+		else if(symbol==' ') {
 			b_printKey = true;
 		}
 	} while (symbol != 'q' && symbol != 0x1b);
@@ -101,10 +118,7 @@ int CMain::run() {
 void CMain::printMenu(int x, int y) {
 	// esc, q = wyjœcie
 	gotoxy(x, y);
-	cputs("q = wyjscie");
-	// strza³ki = poruszanie
-	gotoxy(x, y + 1);
-	cputs("strzalki = poruszanie");
+	cputs("spacja = legenda");
 	// kod klawisza
 	if (zero) sprintf(txt, "kod klawisza: 0x00 0x%02x", symbol);
 	else sprintf(txt, "kod klawisza: 0x%02x", symbol);
@@ -136,12 +150,13 @@ void CMain::printMenu(int x, int y) {
 	cputs(txt);
 	// mo¿liwe wartoœci dla pola
 	gotoxy(x, y + 4);
-	cputs("Mozliwe wartosci:");
+	cputs("Mozliwe wartosci:  ");
+	gotoxy(x + 17, y + 4);
 	if (m->validate(posx, posy, '0'))
 		putchar('0');
 	if (m->validate(posx, posy, '1'))
 		putchar('1');
-	printBorder(x - 1, y - 1, x + 21, y + 10);
+	printBorder(x - 1, y - 1, x + 24, y + 5);
 }
 
 void CMain::printBorder(int x1, int y1, int x2, int y2) {
@@ -251,6 +266,7 @@ void CMain::startNewGame() {
 }
 
 void CMain::save() {
+	gotoxy(1, 1);
 	char nazwa_pliku[255];
 	int startX_pisania = wherex();
 	char symbol;
@@ -311,6 +327,7 @@ void CMain::save() {
 }
 
 void CMain::load() {
+	gotoxy(1, 1);
 	char nazwa_pliku[255];
 	int startX_pisania = wherex();
 	char symbol;

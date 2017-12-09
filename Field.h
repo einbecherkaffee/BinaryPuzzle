@@ -28,6 +28,7 @@ public:
 	void setChar(char c) {
 		if (preset == false) {
 			symbol = c;
+			//write();
 		}
 	}
 	void setPresetChar(char c) {

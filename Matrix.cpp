@@ -226,7 +226,6 @@ bool Matrix::setChar(int x, int y, char c) {
 }
 
 bool Matrix::isCompleted(int x, int y, char c) {
-	// TODO: naprawiæ funkcjê, ¿eby sensowenie dzia³a³a
 	if (c == 'x')
 		for (int i = 0; i < size; i++) {
 			if (board[i][x]->symbol == '.') {

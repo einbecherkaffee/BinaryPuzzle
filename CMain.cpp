@@ -4,8 +4,8 @@
 #include "CMain.h"
 #include "Matrix.h"
 CMain::CMain() {
-	startX = 40;
-	startY = 5;
+	startX = 30;
+	startY = 1;
 	symbol = 0;
 	consoleX = startX + 1;
 	consoleY = startY + 1;
@@ -54,7 +54,10 @@ int CMain::run() {
 
 		zero = 0;
 		symbol = getch();
-		m->highlightNotFillable = false;
+		if (m->highlightNotFillable) {
+			m->highlightNotFillable = false;
+			m->printMatrix(startX+1, startY+1);
+		}
 		if (symbol == 0) {
 			zero = 1;
 			symbol = getch();
@@ -68,13 +71,14 @@ int CMain::run() {
 			if (symbol == '2')
 				symbol = '0';
 			m->setChar(x, y, symbol);
-			m->board[y][x]->write(startX+1, startY+1);
+			m->board[y][x]->write(startX + 1, startY + 1);
 		}
 		else if (symbol == 'j') {
 
 		}
 		else if (symbol == 'k') {
 			m->highlightNotFillable = true;
+			m->printMatrix(startX + 1, startY + 1);
 		}
 		else if (symbol == 'l') {
 			load();
@@ -108,7 +112,7 @@ int CMain::run() {
 		else if (symbol == '.') {
 			m->clear(x, y);
 		}
-		else if(symbol==' ') {
+		else if (symbol == ' ') {
 			b_printKey = true;
 		}
 	} while (symbol != 'q' && symbol != 0x1b);
@@ -122,6 +126,8 @@ void CMain::printMenu(int x, int y) {
 	// kod klawisza
 	if (zero) sprintf(txt, "kod klawisza: 0x00 0x%02x", symbol);
 	else sprintf(txt, "kod klawisza: 0x%02x", symbol);
+	gotoxy(x, y + 1);
+	cputs("wymagania: a-f");
 	// kursor
 	{
 		gotoxy(x, y + 2);
@@ -163,7 +169,7 @@ void CMain::printBorder(int x1, int y1, int x2, int y2) {
 	gotoxy(x1, y1);
 	int width = x2 - x1;
 	int height = y2 - y1;
-	for (int i = 1; i < width+2; i++) {
+	for (int i = 1; i < width + 2; i++) {
 		cputs("=");
 	}
 	for (int i = 1; i < height + 1; i++) {
@@ -173,7 +179,7 @@ void CMain::printBorder(int x1, int y1, int x2, int y2) {
 		cputs("|");
 	}
 	gotoxy(x1, y2);
-	for (int i = 1; i < width+2; i++) {
+	for (int i = 1; i < width + 2; i++) {
 		cputs("=");
 	}
 }
@@ -181,29 +187,29 @@ void CMain::printBorder(int x1, int y1, int x2, int y2) {
 void CMain::printKey(int x, int y) {
 	gotoxy(x, y);
 	cputs("esc, q = wyjscie");
-	gotoxy(x, y+1);
+	gotoxy(x, y + 1);
 	cputs("n= nowa gra");
-	gotoxy(x, y+2);
+	gotoxy(x, y + 2);
 	cputs("01 = wpisanie cyfry");
-	gotoxy(x, y+3);
+	gotoxy(x, y + 3);
 	cputs("o = losowe wypelnienie planszy");
-	gotoxy(x, y+4);
+	gotoxy(x, y + 4);
 	cputs("//p = prosta podpowiedz");
-	gotoxy(x, y+5);
+	gotoxy(x, y + 5);
 	cputs("r = zmiana rozmiaru planszy");
-	gotoxy(x, y+6);
+	gotoxy(x, y + 6);
 	cputs("k = proste sprawdzenie mozliwosci ukonczenia gry");
-	gotoxy(x, y+7);
+	gotoxy(x, y + 7);
 	cputs("d = sprawdzenie reguly (2)");
-	gotoxy(x, y+8);
+	gotoxy(x, y + 8);
 	cputs("a = automatyczna detekcja konca gry");
-	gotoxy(x, y+9);
+	gotoxy(x, y + 9);
 	cputs("j = podswietlenie jednoznacznych pol");
-	gotoxy(x, y+10);
+	gotoxy(x, y + 10);
 	cputs("s = zapisanie stanu gry");
-	gotoxy(x, y+11);
+	gotoxy(x, y + 11);
 	cputs("l = wczytanie stanu gry");
-	gotoxy(x, y+12);
+	gotoxy(x, y + 12);
 	cputs("b = pelne sprawdzenie i pokazanie"\
 		"przykladowego wypelnienia pol");
 }

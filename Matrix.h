@@ -11,7 +11,7 @@ private:
 	const int randomFieldsToFill = 5;
 	const int maxFillingTries = 50;
 public:
-	Field*** board;	// TODO: dodaæ getter
+	Field*** board;
 
 	int getSize();
 	void setSize(int size);

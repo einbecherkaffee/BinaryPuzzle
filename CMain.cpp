@@ -56,7 +56,7 @@ int CMain::run() {
 		symbol = getch();
 		if (m->highlightNotFillable) {
 			m->highlightNotFillable = false;
-			m->printMatrix(startX+1, startY+1);
+			m->printMatrix(startX + 1, startY + 1);
 		}
 		if (symbol == 0) {
 			zero = 1;
@@ -215,7 +215,7 @@ void CMain::printKey(int x, int y) {
 }
 
 int CMain::getUserInput() {
-
+	const int max_size = 40;
 	int startX_pisania = wherex();
 	char symbol;
 	bool podanoParzysta = true;
@@ -244,9 +244,9 @@ int CMain::getUserInput() {
 
 			}
 		} while (true);
-		if (size < 2 || size % 2 == 1) {
-			gotoxy(startX_pisania, y + 1);
-			printf("Podano nieparzysta liczbe lub za maly rozmiar!");
+		if (size < 2 || size % 2 == 1 || size>max_size) {
+			gotoxy(1, y + 1);
+			printf("Podano nieparzysta liczbe lub za maly/duzy rozmiar!");
 			podanoParzysta = false;
 			size = 0;
 			int charsToDelete = wherex() - startX_pisania;
@@ -264,9 +264,9 @@ int CMain::getUserInput() {
 
 void CMain::startNewGame() {
 	clrscr();
-	gotoxy(0, 0);
-	cputs("Podaj rozmiar planszy: ");
 	delete m;
+	gotoxy(1, 1);
+	cputs("Podaj rozmiar planszy: ");
 	int size = getUserInput();
 	m = new Matrix(size);
 }

@@ -10,6 +10,8 @@ private:
 	int size = 0;
 	const int randomFieldsToFill = 5;
 	const int maxFillingTries = 50;
+	int* sum0;
+	int* sum1;
 public:
 	Field*** board;
 

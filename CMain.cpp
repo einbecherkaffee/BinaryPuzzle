@@ -28,6 +28,7 @@ int CMain::run() {
 	printBorder(startX, startY, startX + m->getSize() + 1, startY + m->getSize() + 1);
 	m->printMatrix(startX + 1, startY + 1);
 	do {
+		m->updateSizeArrays();
 		textcolor(7);
 		x = consoleX - 1 - startX;
 		y = consoleY - 1 - startY;
@@ -49,6 +50,7 @@ int CMain::run() {
 			printBorder(startX, startY, startX + m->getSize() + 1, startY + m->getSize() + 1);
 			m->printMatrix(startX + 1, startY + 1);
 		}
+		m->printMatrix(startX + 1, startY + 1);
 		gotoxy(consoleX, consoleY);
 
 
@@ -70,8 +72,11 @@ int CMain::run() {
 		else if (symbol == '1' || symbol == '0' || symbol == '2') {
 			if (symbol == '2')
 				symbol = '0';
+			
 			m->setChar(x, y, symbol);
 			m->board[y][x]->write(startX + 1, startY + 1);
+			m->updateSizeArrays();
+			
 		}
 		else if (symbol == 'j') {
 			m->highlightUnambiguous = true;
@@ -89,21 +94,18 @@ int CMain::run() {
 		}
 		else if (symbol == 'l') {
 			load();
-			printMenu(menu_pos.x, menu_pos.y);
-			printBorder(startX, startY, startX + m->getSize() + 1, startY + m->getSize() + 1);
-			m->printMatrix(startX + 1, startY + 1);
+			
 		}
 		else if (symbol == 'n') {
 			clrscr();
 			delete m;
 			m = new Matrix(12);
-			printMenu(menu_pos.x, menu_pos.y);
 			printBorder(startX, startY, startX + m->getSize() + 1, startY + m->getSize() + 1);
 			m->printMatrix(startX + 1, startY + 1);
 		}
 		else if (symbol == 'o') {
 			m->fillRandomFields();
-			m->printMatrix(startX + 1, startY + 1);
+			//m->printMatrix(startX + 1, startY + 1);
 		}
 		else if (symbol == 'p') {
 			// TODO: podpowiedz

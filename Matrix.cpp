@@ -12,7 +12,17 @@ Matrix::Matrix(int size) {
 	highlightNotFillable = false;
 	highlightUnambiguous = false;
 	setSize(size);
-
+	sum0_x = new int[size];
+	sum0_y = new int[size];
+	sum1_x = new int[size];
+	sum1_y = new int[size];
+	for (int i = 0; i < size; i++)
+	{
+		sum0_x[i] = 0;
+		sum0_y[i] = 0;
+		sum1_x[i] = 0;
+		sum1_y[i] = 0;
+	}
 	char filename[] = "plansza00x00.txt";
 	char* row;
 	if (size < 10) {
@@ -59,6 +69,7 @@ Matrix::Matrix(int size) {
 			fillRandomFields();
 		}
 	}
+	updateSizeArrays();
 }
 
 Matrix::Matrix(int size, bool a) {
@@ -78,11 +89,15 @@ Matrix::Matrix(int size, bool a) {
 
 
 Matrix::~Matrix() {
+	delete[] sum0_x;
+	delete[] sum1_x;
+	delete[] sum0_y;
+	delete[] sum1_y;
 	if (!board)
 		for (int i = 0; i < size; i++) {
 			delete board[i];
 		}
-	delete board;
+	delete[] board;
 }
 
 int Matrix::getSize() {
@@ -219,7 +234,34 @@ void Matrix::printMatrix(int x, int y) {
 			textbackground(BLACK);
 		}
 	}
-
+	for (int i = 0; i < size; i++) {
+		gotoxy(x + size + 2, y + i);
+		if (sum0_y[i] / 10 > 0) {
+			putch(sum0_y[i] / 10 + '0');
+		}
+		putch(sum0_y[i] % 10 + '0');
+		putch(' ');
+		if (sum1_y[i] / 10 > 0) {
+			putch(sum1_y[i] / 10 + '0');
+		}
+		putch(sum1_y[i] % 10 + '0');
+	}
+	for (int i = 0; i < size; i++) {
+		gotoxy(x + i, y + size + 2);
+		if (sum0_x[i] / 10 > 0) {
+			putch(sum0_x[i] / 10 + '0');
+			gotoxy(x + i, y + size + 3);
+		}
+		putch(sum0_x[i] % 10 + '0');
+		gotoxy(wherex() - 1, wherey() + 1);
+		putch(' ');
+		gotoxy(wherex() - 1, wherey() + 1);
+		if (sum1_x[i] / 10 > 0) {
+			putch(sum1_x[i] / 10 + '0');
+			gotoxy(wherex() - 1, wherey() + 1);
+		}
+		putch(sum1_x[i] % 10 + '0');
+	}
 }
 
 bool Matrix::setChar(int x, int y, char c) {
@@ -339,6 +381,29 @@ void Matrix::fillUnambiguous() {
 				}
 			}
 
+		}
+	}
+}
+
+void Matrix::updateSizeArrays() {
+	for (int i = 0; i < size; i++)
+	{
+		sum0_x[i] = 0;
+		sum0_y[i] = 0;
+		sum1_x[i] = 0;
+		sum1_y[i] = 0;
+	}
+	
+	for (int i = 0; i < size; i++) {
+		for (int j = 0; j < size; j++) {
+			if (board[j][i]->symbol == '0') {
+				sum0_x[i]++;
+				sum0_y[j]++;
+			}
+			if (board[j][i]->symbol == '1') {
+				sum1_x[i]++;
+				sum1_y[j]++;
+			}
 		}
 	}
 }

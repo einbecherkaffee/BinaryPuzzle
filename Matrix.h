@@ -10,8 +10,10 @@ private:
 	int size = 0;
 	const int randomFieldsToFill = 5;
 	const int maxFillingTries = 50;
-	int* sum0;
-	int* sum1;
+	int* sum0_x;
+	int* sum1_x;
+	int* sum0_y;
+	int* sum1_y;
 public:
 	Field*** board;
 
@@ -36,6 +38,7 @@ public:
 	void fillRandomFields();
 	void clear(int x, int y);
 	void fillUnambiguous();
+	void updateSizeArrays();
 	
 };
 #endif // !MATRIX_H

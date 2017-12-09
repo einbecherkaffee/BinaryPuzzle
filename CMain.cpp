@@ -22,6 +22,7 @@ CMain::~CMain() {
 
 int CMain::run() {
 	int x, y;
+	bool b_printKey = false;
 	do {
 		textbackground(BLACK);
 		clrscr();
@@ -30,22 +31,18 @@ int CMain::run() {
 		y = consoleY - 1 - startY;
 		posx = x;
 		posy = y;
-		printBorder(); // wypisanie planszy od miejsca x,y (konsola zaczyna siê od (1,1)
-		//if (m->noerrors == false) { // TODO: sprawdziæ czy potrzebne
-		//	printf("An error occured!");
-		//	return -1;
-		//}
+
+		printMenu(2, 2);
+		printBorder(startX, startY, startX + m->getSize() + 1, startY + m->getSize() + 1);
 		m->printMatrix(startX + 1, startY + 1);
-
-		printMenu(1, 1);
-
-
-
+		if (b_printKey) {
+			printKey(1, 1);
+			b_printKey = false;
+		}
 		// rysujemy na ekranie kolorow¹ gwiazdkê
 		gotoxy(consoleX, consoleY);
 		textcolor(textCol);
 		textbackground(bgCol);
-		//putch('*');
 
 
 		zero = 0;
@@ -63,8 +60,6 @@ int CMain::run() {
 		else if (symbol == '1' || symbol == '0' || symbol == '2') {
 			if (symbol == '2')
 				symbol = '0';
-			// wpisz znak do planszy w pozycji x, y
-			// TODO: b³¹d gdy kursor jest poza plansz¹
 			m->setChar(x, y, symbol);
 		}
 		else if (symbol == 'j') {
@@ -95,91 +90,107 @@ int CMain::run() {
 		else if (symbol == '.') {
 			m->clear(x, y);
 		}
-		else if (symbol == ' ') textCol = (textCol + 1) % 16;
-		else if (symbol == 0x0d) bgCol = (bgCol + 1) % 16;
+		else {
+			// legenda
+			b_printKey = true;
+		}
 	} while (symbol != 'q' && symbol != 0x1b);
 	return 0;
 }
 
 void CMain::printMenu(int x, int y) {
-	if (x > 0) {
-		gotoxy(x, y);
-		cputs("*=====+=====+=====+=====+=====*");
-	}
+	// esc, q = wyjœcie
+	gotoxy(x, y);
+	cputs("q = wyjscie");
+	// strza³ki = poruszanie
 	gotoxy(x, y + 1);
-	// wyœwietlamy na ekranie, w miejscu kursora napis
-	// kursor przesuwa siê w prawo o d³ugoœæ napisu
-	cputs("|| q = wyjscie");
-	gotoxy(x, y + 2);
-	cputs("|| strzalki = poruszanie");
-	gotoxy(x, y + 3);
-	cputs("|| spacja = zmiana koloru");
-	gotoxy(x, y + 4);
-	cputs("|| enter = zmiana koloru tla");
-
-	// wypisujemy na ekranie kod ostatnio naciœniêtego klawisza
+	cputs("strzalki = poruszanie");
+	// kod klawisza
 	if (zero) sprintf(txt, "kod klawisza: 0x00 0x%02x", symbol);
 	else sprintf(txt, "kod klawisza: 0x%02x", symbol);
-	gotoxy(x, y + 5);
-	//wyswietlanie pozycji kursora
-	cputs("|| kursor: ");
-	if (consoleX >= 10)
-		putchar(consoleX / 10 + 0x30);
-	putchar(consoleX % 10 + 0x30);
+	// kursor
+	{
+		gotoxy(x, y + 2);
+		cputs("kursor: ");
+		if (consoleX >= 10)
+			putchar(consoleX / 10 + 0x30);
+		putchar(consoleX % 10 + 0x30);
 
-	putchar(' ');
-	if (consoleY >= 10)
-		putchar(consoleY / 10 + 0x30);
-	putchar(consoleY % 10 + 0x30);
+		putchar(' ');
+		if (consoleY >= 10)
+			putchar(consoleY / 10 + 0x30);
+		putchar(consoleY % 10 + 0x30);
 
-	cputs("//");
-	if (posx >= 10)
-		putchar(posx / 10 + 0x30);
-	putchar(posx % 10 + 0x30);
+		cputs("//");
+		if (posx >= 10)
+			putchar(posx / 10 + 0x30);
+		putchar(posx % 10 + 0x30);
 
-	putchar(' ');
-	if (posy >= 10)
-		putchar(posy / 10 + 0x30);
-	putchar(posy % 10 + 0x30);
-
-
-
-	gotoxy(x, y + 6);
-	cputs("|| ");
+		putchar(' ');
+		if (posy >= 10)
+			putchar(posy / 10 + 0x30);
+		putchar(posy % 10 + 0x30);
+	}
+	// kod klawisza
+	gotoxy(x, y + 3);
 	cputs(txt);
-	gotoxy(x, y + 7);
-	cputs("|| Mozliwe wartosci:");
+	// mo¿liwe wartoœci dla pola
+	gotoxy(x, y + 4);
+	cputs("Mozliwe wartosci:");
 	if (m->validate(posx, posy, '0'))
 		putchar('0');
 	if (m->validate(posx, posy, '1'))
 		putchar('1');
+	printBorder(x - 1, y - 1, x + 21, y + 10);
+}
 
-	gotoxy(x, y + 8);
-	cputs("*=====+=====+=====+=====+=====*");
-
-	//drukowane boków
-	for (int i = 1; i < 7; i++) {
-		gotoxy(x + 29, y + i);
-		cputs("||");
+void CMain::printBorder(int x1, int y1, int x2, int y2) {
+	gotoxy(x1, y1);
+	int width = x2 - x1;
+	int height = y2 - y1;
+	for (int i = 1; i < width+2; i++) {
+		cputs("=");
+	}
+	for (int i = 1; i < height + 1; i++) {
+		gotoxy(x1, y1 + i);
+		cputs("|");
+		gotoxy(x2, y1 + i);
+		cputs("|");
+	}
+	gotoxy(x1, y2);
+	for (int i = 1; i < width+2; i++) {
+		cputs("=");
 	}
 }
 
-void CMain::printBorder() {
-	int rozmiar = m->getSize();
-	gotoxy(startX, startY);
-	for (int i = 1; i < rozmiar + 3; i++) {
-		cputs("=");
-	}
-	for (int i = 1; i < rozmiar + 1; i++) {
-		gotoxy(startX, startY + i);
-		cputs("|");
-		gotoxy(startX + rozmiar + 1, startY + i);
-		cputs("|");
-	}
-	gotoxy(startX, startY + rozmiar + 1);
-	for (int i = 1; i < rozmiar + 3; i++) {
-		cputs("=");
-	}
+void CMain::printKey(int x, int y) {
+	gotoxy(x, y);
+	cputs("esc, q = wyjscie");
+	gotoxy(x, y+1);
+	cputs("n= nowa gra");
+	gotoxy(x, y+2);
+	cputs("01 = wpisanie cyfry");
+	gotoxy(x, y+3);
+	cputs("o = losowe wypelnienie planszy");
+	gotoxy(x, y+4);
+	cputs("//p = prosta podpowiedz");
+	gotoxy(x, y+5);
+	cputs("r = zmiana rozmiaru planszy");
+	gotoxy(x, y+6);
+	cputs("k = proste sprawdzenie mozliwosci ukonczenia gry");
+	gotoxy(x, y+7);
+	cputs("d = sprawdzenie reguly (2)");
+	gotoxy(x, y+8);
+	cputs("a = automatyczna detekcja konca gry");
+	gotoxy(x, y+9);
+	cputs("j = podswietlenie jednoznacznych pol");
+	gotoxy(x, y+10);
+	cputs("s = zapisanie stanu gry");
+	gotoxy(x, y+11);
+	cputs("l = wczytanie stanu gry");
+	gotoxy(x, y+12);
+	cputs("b = pelne sprawdzenie i pokazanie"\
+		"przykladowego wypelnienia pol");
 }
 
 int CMain::getUserInput() {

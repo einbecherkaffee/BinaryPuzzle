@@ -16,7 +16,8 @@ public:
 	~CMain();
 	int run();
 	void printMenu(int x, int y);
-	void printBorder();
+	void printBorder(int x1, int y1, int x2, int y2);
+	void printKey(int x, int y);
 	int getUserInput();
 	void startNewGame();
 	void save();

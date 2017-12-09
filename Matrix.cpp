@@ -10,6 +10,7 @@ Matrix::Matrix() { }
 
 Matrix::Matrix(int size) {
 	highlightNotFillable = false;
+	highlightUnambiguous = false;
 	setSize(size);
 
 	char filename[] = "plansza00x00.txt";
@@ -197,18 +198,23 @@ bool Matrix::validate(int x, int y, char symbol) {
 
 void Matrix::printMatrix(int x, int y) {
 	Field* p;
+	bool val0, val1;
 	for (int i = 0; i < size; i++) {
 		for (int j = 0; j < size; j++) {
+			val0 = validate(j, i, '0');
+			val1 = validate(j, i, '1');
 			p = board[i][j];
 			if (p->preset) {
 				/*textbackground(WHITE);*/
 				textcolor(LIGHTGREEN);
 			}
-			else if (highlightNotFillable && !(validate(j, i, '0') || validate(j, i, '1'))) {
+			if (highlightNotFillable && !(val0 || val1)) {
 				textbackground(CYAN);
 			}
+			if (highlightUnambiguous && ((!val0 && val1) || (val0 && !val1))) {
+				textbackground(LIGHTGREEN);
+			}
 			p->write(x, y);
-			//textbackground(BLACK);
 			textcolor(WHITE);
 			textbackground(BLACK);
 		}
@@ -219,7 +225,6 @@ void Matrix::printMatrix(int x, int y) {
 bool Matrix::setChar(int x, int y, char c) {
 	if (validate(x, y, c)) {
 		board[y][x]->setChar(c);
-		board[y][x]->write();
 		return true;
 	}
 	return false;
@@ -315,4 +320,25 @@ void Matrix::fillRandomFields() {
 
 void Matrix::clear(int x, int y) {
 	board[y][x]->setChar('.');
+}
+
+void Matrix::fillUnambiguous() {
+	bool val0, val1;
+	Field* p;
+	for (int i = 0; i < size; i++) {
+		for (int j = 0; j < size; j++) {
+			val0 = validate(j, i, '0');
+			val1 = validate(j, i, '1');
+			p = board[i][j];
+			if ((!val0 && val1) || (val0 && !val1)) {
+				if (val0) {
+					setChar(j, i, '0');
+				}
+				else {
+					setChar(j, i, '1');
+				}
+			}
+
+		}
+	}
 }

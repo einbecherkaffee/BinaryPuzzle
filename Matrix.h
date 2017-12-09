@@ -18,6 +18,7 @@ public:
 	int getSize();
 	void setSize(int size);
 	bool highlightNotFillable;
+	bool highlightUnambiguous;
 
 public:
 	Matrix();
@@ -34,6 +35,7 @@ public:
 	bool fillRandomField();
 	void fillRandomFields();
 	void clear(int x, int y);
+	void fillUnambiguous();
 	
 };
 #endif // !MATRIX_H

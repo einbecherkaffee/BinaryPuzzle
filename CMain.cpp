@@ -74,7 +74,14 @@ int CMain::run() {
 			m->board[y][x]->write(startX + 1, startY + 1);
 		}
 		else if (symbol == 'j') {
-
+			m->highlightUnambiguous = true;
+			m->printMatrix(startX + 1, startY + 1);
+			m->highlightUnambiguous = false;
+			if (getch() == 'w') {
+				m->fillUnambiguous();
+			}
+			//getch();
+			m->printMatrix(startX + 1, startY + 1);
 		}
 		else if (symbol == 'k') {
 			m->highlightNotFillable = true;
@@ -87,8 +94,12 @@ int CMain::run() {
 			m->printMatrix(startX + 1, startY + 1);
 		}
 		else if (symbol == 'n') {
+			clrscr();
 			delete m;
 			m = new Matrix(12);
+			printMenu(menu_pos.x, menu_pos.y);
+			printBorder(startX, startY, startX + m->getSize() + 1, startY + m->getSize() + 1);
+			m->printMatrix(startX + 1, startY + 1);
 		}
 		else if (symbol == 'o') {
 			m->fillRandomFields();
